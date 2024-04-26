@@ -1,0 +1,53 @@
+{
+  "name": "thebatclaudio/laravel-eloquent-markdown",
+  "description": "Convert markdown files to Eloquent models",
+  "type": "library",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "TheBatClaudio\\EloquentMarkdown\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Claudio La Barbera",
+      "email": "hello@thebatclaud.io",
+      "homepage": "https://thebatclaud.io"
+    }
+  ],
+  "require": {
+    "php": "^8.1",
+    "illuminate/database": "^11.5",
+    "illuminate/support": "^11.5",
+    "spatie/yaml-front-matter": "^2.0"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "config": {
+    "sort-packages": true,
+    "preferred-install": "dist",
+    "optimize-autoloader": true,
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  },
+  "require-dev": {
+    "larastan/larastan": "^2.0",
+    "laravel/pint": "^1.15",
+    "orchestra/testbench": "^9.0",
+    "pestphp/pest": "^2.34",
+    "phpstan/phpstan": "^1.10"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "TheBatClaudio\\EloquentMarkdown\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "TheBatClaudio\\EloquentMarkdown\\Providers\\EloquentMarkdownServiceProvider"
+      ]
+    }
+  }
+}
