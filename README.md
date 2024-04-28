@@ -35,7 +35,7 @@ By default, markdown files will be retrieved from `resources/markdown`. Optional
 edit the default markdown's location with:
 
 ```bash
-php artisan vendor:publish --provider="TheBatClaudio\EloquentMarkdown\EloquentMarkdownServiceProvider" --tag="config"
+php artisan vendor:publish --provider="TheBatClaudio\EloquentMarkdown\Providers\EloquentMarkdownServiceProvider" --tag="config"
 ```
 
 ## Credits

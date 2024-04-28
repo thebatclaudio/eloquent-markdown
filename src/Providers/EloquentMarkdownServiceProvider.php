@@ -17,7 +17,7 @@ final class EloquentMarkdownServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->publishes([
-            __DIR__.'/../config/markdown-model.php' => config_path('markdown-model.php'),
+            __DIR__.'/../../config/markdown-model.php' => config_path('markdown-model.php'),
         ], 'config');
 
         MarkdownCollection::macro('paginate', function (int $perPage = 10) {
