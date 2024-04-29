@@ -53,6 +53,9 @@ class MarkdownModel extends Model
         );
     }
 
+    /**
+     * Retrieve markdown files and set $allMarkdownFiles static variable.
+     */
     private static function retrieveMarkdownFiles(): void
     {
         $contentPath = config('markdown-model.path');
@@ -68,6 +71,11 @@ class MarkdownModel extends Model
             });
     }
 
+    /**
+     * Get all markdown files.
+     *
+     * @param  array  $columns
+     */
     public static function all($columns = ['*']): MarkdownCollection
     {
         if (! self::$allMarkdownFiles) {
@@ -77,6 +85,9 @@ class MarkdownModel extends Model
         return self::$allMarkdownFiles;
     }
 
+    /**
+     * Get a markdown file by its slug.
+     */
     public static function find(string $slug): ?MarkdownModel
     {
         if (! self::$allMarkdownFiles) {

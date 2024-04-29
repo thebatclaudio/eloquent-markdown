@@ -1,8 +1,10 @@
 # [WIP] Convert Markdown files to Eloquent models
 
 <p>
-  <a href="https://styleci.io/repos/792520425"><img src="https://styleci.io/repos/792520425/shield" alt="StyleCI Status"></img></a>
-  <a href="https://img.shields.io/github/actions/workflow/status/thebatclaudio/laravel-eloquent-markdown/tests.yml?branch=main&label=tests&style=flat-square"><img src="https://img.shields.io/github/actions/workflow/status/thebatclaudio/laravel-eloquent-markdown/tests.yml?branch=main&label=tests&style=flat-square" alt="GitHub Workflow Status"></img></a>
+  <a href="https://raw.githubusercontent.com/thebatclaudio/eloquent-markdown/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="GitHub License" /></a>
+  <a href="https://packagist.org/packages/thebatclaudio/eloquent-markdown"><img src="https://img.shields.io/packagist/v/thebatclaudio/eloquent-markdown.svg" alt="Latest stable version" /></a>
+  <a href="https://styleci.io/repos/792520425"><img src="https://styleci.io/repos/792520425/shield" alt="StyleCI Status" /></a>
+  <a href="https://img.shields.io/github/actions/workflow/status/thebatclaudio/laravel-eloquent-markdown/tests.yml?branch=main&label=tests&style=flat-square"><img src="https://img.shields.io/github/actions/workflow/status/thebatclaudio/laravel-eloquent-markdown/tests.yml?branch=main&label=tests&style=flat-square" alt="GitHub Workflow Status" /></a>
 </p>
 
 Easily manage Markdown files using Eloquent Models.

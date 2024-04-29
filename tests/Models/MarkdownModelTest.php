@@ -52,6 +52,8 @@ it('returns the right file calling find method', function () {
         ->toBe('Second attribute')
         ->and($markdown?->third_attribute)
         ->toBe('Third attribute')
-        ->and($markdown->content)
+        ->and($markdown?->content)
         ->toContain('The time has come');
 });
+
+it('');
