@@ -63,14 +63,14 @@ class MarkdownModel extends Model
             })
             ->mapWithKeys(function ($file) use ($contentPath) {
                 return [
-                    self::removeFileExtension($file->getBaseName()) => new self($contentPath . '/' . $file->getBaseName()),
+                    self::removeFileExtension($file->getBaseName()) => new self($contentPath.'/'.$file->getBaseName()),
                 ];
             });
     }
 
     public static function all($columns = ['*']): MarkdownCollection
     {
-        if (!self::$allMarkdownFiles) {
+        if (! self::$allMarkdownFiles) {
             static::retrieveMarkdownFiles();
         }
 
@@ -79,7 +79,7 @@ class MarkdownModel extends Model
 
     public static function find(string $slug): ?MarkdownModel
     {
-        if (!self::$allMarkdownFiles) {
+        if (! self::$allMarkdownFiles) {
             static::retrieveMarkdownFiles();
         }
 

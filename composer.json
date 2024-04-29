@@ -1,5 +1,5 @@
 {
-  "name": "thebatclaudio/laravel-eloquent-markdown",
+  "name": "thebatclaudio/eloquent-markdown",
   "description": "Convert markdown files to Eloquent models",
   "type": "library",
   "license": "MIT",

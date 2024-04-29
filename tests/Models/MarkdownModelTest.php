@@ -35,7 +35,7 @@ it('returns all files calling all methods', function () {
         );
 });
 
-it('returns the right file calling find method', function() {
+it('returns the right file calling find method', function () {
     $markdown = MarkdownModel::find('test');
 
     expect($markdown)

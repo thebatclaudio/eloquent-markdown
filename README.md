@@ -28,7 +28,7 @@ echo $homepage->content;
 You can install the package via composer:
 
 ```bash
-composer require thebatclaudio/laravel-eloquent-markdown
+composer require thebatclaudio/eloquent-markdown
 ```
 
 By default, markdown files will be retrieved from `resources/markdown`. Optionally you can publish the config file and
