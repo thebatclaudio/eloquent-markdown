@@ -7,7 +7,7 @@
   <a href="https://img.shields.io/github/actions/workflow/status/thebatclaudio/laravel-eloquent-markdown/tests.yml?branch=main&label=tests&style=flat-square"><img src="https://img.shields.io/github/actions/workflow/status/thebatclaudio/laravel-eloquent-markdown/tests.yml?branch=main&label=tests&style=flat-square" alt="GitHub Workflow Status" /></a>
 </p>
 
-Easily manage Markdown files using Eloquent Models.
+Easily manage Markdown files with YAML Front Matter section using Eloquent Models.
 
 ```php
 // Get all markdown files
@@ -16,7 +16,7 @@ MarkdownModel::all();
 // Get a markdown file by its slug (example: homepage.md)
 $homepage = MarkdownModel::find('homepage');
 
-// Get yaml metadata
+// Get Yaml Front Matter metadata
 echo $homepage->title;
 echo $homepage->description;
 echo $homepage->attribute;
@@ -46,4 +46,4 @@ php artisan vendor:publish --provider="TheBatClaudio\EloquentMarkdown\Providers\
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+The MIT License (MIT). Please see [License File](LICENSE) for more information.
