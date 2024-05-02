@@ -5,15 +5,27 @@ declare(strict_types=1);
 namespace TheBatClaudio\EloquentMarkdown\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Spatie\YamlFrontMatter\YamlFrontMatter;
 use TheBatClaudio\EloquentMarkdown\Support\MarkdownCollection;
 
 /**
  * Class MarkdownModel.
  */
-class MarkdownModel extends Model
+abstract class MarkdownModel extends Model
 {
+    public $incrementing = false;
+
+    public $keyType = 'string';
+
+    public const FILE_EXTENSION = '.md';
+
+    public const DOTS_SEPARATOR = '...';
+
+    public const DASHES_SEPARATOR = '---';
+
     /**
      * A collection that contains all files retrieved in the default content path.
      */
@@ -23,7 +35,15 @@ class MarkdownModel extends Model
 
     public function __construct(?string $filename = null)
     {
-        parent::__construct($filename ? self::extractAttributes($filename) : []);
+        parent::__construct($filename ? static::extractAttributes($filename) : []);
+    }
+
+    /**
+     * Get content path (edit this method if you need different content path for different models).
+     */
+    private static function getContentPath(): string
+    {
+        return config('markdown-model.path');
     }
 
     /**
@@ -31,24 +51,37 @@ class MarkdownModel extends Model
      */
     private static function removeFileExtension(string $filename): string
     {
-        return str_replace('.md', '', $filename);
+        return Str::replace(static::FILE_EXTENSION, '', $filename);
+    }
+
+    /**
+     * Extract file ID from file's path (e.g 'category/page' is the ID of './category/page.md').
+     */
+    private static function extractFileId(string $filePath): string
+    {
+        return static::removeFileExtension(
+            Str::replace(static::getContentPath().'/', '', $filePath)
+        );
     }
 
     /**
      * Extract attributes from the YAML section of the markdown file and merge them with the real file content.
      */
-    private static function extractAttributes(string $filename): array
+    protected static function extractAttributes(string $filePath): array
     {
+        $fileName = File::basename($filePath);
+
         $metadata = YamlFrontMatter::parse(
-            file_get_contents(
-                $filename
-            )
+            File::get($filePath)
         );
 
         return array_merge(
             $metadata->matter(),
             [
                 'content' => $metadata->body(),
+                'file_path' => $filePath,
+                'file_name' => $fileName,
+                'id' => static::extractFileId($filePath),
             ]
         );
     }
@@ -58,17 +91,39 @@ class MarkdownModel extends Model
      */
     private static function retrieveMarkdownFiles(): void
     {
-        $contentPath = config('markdown-model.path');
+        $contentPath = static::getContentPath();
 
-        self::$allMarkdownFiles = (new MarkdownCollection(File::allFiles($contentPath)))
-            ->sortByDesc(function ($file) {
-                return $file->getBaseName();
-            })
-            ->mapWithKeys(function ($file) use ($contentPath) {
-                return [
-                    self::removeFileExtension($file->getBaseName()) => new self($contentPath.'/'.$file->getBaseName()),
-                ];
-            });
+        $allFiles = File::allFiles($contentPath);
+
+        // Check if we already retrieved all files
+        if (! static::$allMarkdownFiles || count($allFiles) !== count(static::$allMarkdownFiles)) {
+            static::$allMarkdownFiles = (new MarkdownCollection($allFiles))
+                ->filter(function ($file) {
+                    return $file->isFile();
+                })
+                ->sortByDesc(function ($file) {
+                    return $file->getBaseName();
+                })
+                ->mapWithKeys(function ($file) use ($contentPath) {
+                    return [
+                        static::extractFileId($file->getPathName()) => new static($contentPath.'/'.$file->getBaseName()),
+                    ];
+                });
+        }
+    }
+
+    /**
+     * Retrieve a single markdown file by ID.
+     */
+    private static function retrieveMarkdownFile(string $id): void
+    {
+        $contentPath = static::getContentPath();
+
+        if (! static::$allMarkdownFiles) {
+            static::$allMarkdownFiles = new MarkdownCollection();
+        }
+
+        static::$allMarkdownFiles[static::removeFileExtension($id)] = new static($contentPath.'/'.$id.static::FILE_EXTENSION);
     }
 
     /**
@@ -78,22 +133,79 @@ class MarkdownModel extends Model
      */
     public static function all($columns = ['*']): MarkdownCollection
     {
-        if (! self::$allMarkdownFiles) {
-            static::retrieveMarkdownFiles();
-        }
+        static::retrieveMarkdownFiles();
 
-        return self::$allMarkdownFiles;
+        return static::$allMarkdownFiles;
     }
 
     /**
      * Get a markdown file by its slug.
      */
-    public static function find(string $slug): ?MarkdownModel
+    public static function find(string $slug): ?static
     {
-        if (! self::$allMarkdownFiles) {
-            static::retrieveMarkdownFiles();
+        if (! static::$allMarkdownFiles) {
+            static::retrieveMarkdownFile($slug);
         }
 
-        return self::$allMarkdownFiles->get($slug);
+        return static::$allMarkdownFiles->get($slug);
+    }
+
+    /**
+     * Get file content mixing YAML Front Matter attributes and markdown content.
+     */
+    private function getFileContent(): string
+    {
+        $content = Str::replace(
+            static::DOTS_SEPARATOR,
+            static::DASHES_SEPARATOR,
+            yaml_emit(
+                Arr::except(
+                    $this->getAttributes(),
+                    [
+                        'id',
+                        'content',
+                    ]
+                )
+            )."\n"
+        );
+        $content .= $this->content;
+
+        return $content;
+    }
+
+    /**
+     * Get file path.
+     */
+    private function getFilePath(): string
+    {
+        if ($this->file_path) {
+            return $this->file_path;
+        }
+
+        return static::getContentPath().'/'.$this->id.static::FILE_EXTENSION;
+    }
+
+    /**
+     * Save model on file.
+     */
+    public function save(array $options = []): bool
+    {
+        $saved = File::put($this->getFilePath(), $this->getFileContent());
+
+        if ($saved) {
+            $this->exists = true;
+
+            $this->finishSave($options);
+        }
+
+        return (bool) $saved;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function performDeleteOnModel(): void
+    {
+        unlink($this->getFilePath());
     }
 }
