@@ -55,5 +55,3 @@ it('returns the right file calling find method', function () {
         ->and($markdown?->content)
         ->toContain('The time has come');
 });
-
-it('');
