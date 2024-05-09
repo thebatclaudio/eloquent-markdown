@@ -1,4 +1,4 @@
-# [WIP] Convert Markdown files to Eloquent models
+# Convert Markdown files to Eloquent models
 
 <p>
   <a href="https://raw.githubusercontent.com/thebatclaudio/eloquent-markdown/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="GitHub License" /></a>
