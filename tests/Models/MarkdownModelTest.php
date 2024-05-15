@@ -107,3 +107,42 @@ it('should delete file', function () {
     expect(file_exists($filepath))
         ->toBeFalse();
 });
+
+it('should update file', function () {
+    $fileId = 'update-test';
+    $filepath = Config::get('markdown-model.path').'/'.$fileId.MarkdownModel::FILE_EXTENSION;
+
+    $markdown = new TestModel();
+
+    $markdown->id = $fileId;
+    $markdown->attribute = 'test';
+
+    $markdown->content = 'content';
+
+    $markdown->save();
+
+    expect(file_exists($filepath))
+        ->toBeTrue();
+
+    $markdown->update([
+        'attribute' => 'changed',
+    ]);
+
+    $markdown = TestModel::find($fileId);
+
+    expect($markdown)
+        ->not->toBeNull()
+        ->and($markdown->attribute)
+        ->toBe('changed');
+
+    $markdown->delete();
+});
+
+it('should not find non existing file', function () {
+    $fileId = 'not-found-test';
+
+    $markdown = TestModel::find($fileId);
+
+    expect($markdown)
+        ->toBeNull();
+});
