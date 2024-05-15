@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace TheBatClaudio\EloquentMarkdown\Models;
 
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
@@ -33,15 +34,23 @@ abstract class MarkdownModel extends Model
 
     protected $guarded = [];
 
-    public function __construct(?string $filename = null)
+    public function __construct(?string $filePath = null)
     {
-        parent::__construct($filename ? static::extractAttributes($filename) : []);
+        try {
+            parent::__construct($filePath ? static::extractAttributes($filePath) : []);
+
+            $this->exists = true;
+        } catch (FileNotFoundException $e) {
+            parent::__construct([
+                'id' => static::extractFileId($filePath),
+            ]);
+        }
     }
 
     /**
      * Get content path (edit this method if you need different content path for different models).
      */
-    private static function getContentPath(): string
+    protected static function getContentPath(): string
     {
         return config('markdown-model.path');
     }
@@ -57,7 +66,7 @@ abstract class MarkdownModel extends Model
     /**
      * Extract file ID from file's path (e.g 'category/page' is the ID of './category/page.md').
      */
-    private static function extractFileId(string $filePath): string
+    protected static function extractFileId(string $filePath): string
     {
         return static::removeFileExtension(
             Str::replace(static::getContentPath().'/', '', $filePath)
@@ -123,7 +132,9 @@ abstract class MarkdownModel extends Model
             static::$allMarkdownFiles = new MarkdownCollection();
         }
 
-        static::$allMarkdownFiles[static::removeFileExtension($id)] = new static($contentPath.'/'.$id.static::FILE_EXTENSION);
+        $filePath = $contentPath.'/'.$id.static::FILE_EXTENSION;
+
+        static::$allMarkdownFiles[static::removeFileExtension($id)] = (File::exists($filePath)) ? new static($filePath) : null;
     }
 
     /**
@@ -139,15 +150,13 @@ abstract class MarkdownModel extends Model
     }
 
     /**
-     * Get a markdown file by its slug.
+     * Get a markdown file by its id.
      */
-    public static function find(string $slug): ?static
+    public static function find(string $id): ?static
     {
-        if (! static::$allMarkdownFiles) {
-            static::retrieveMarkdownFile($slug);
-        }
+        static::retrieveMarkdownFile($id);
 
-        return static::$allMarkdownFiles->get($slug);
+        return static::$allMarkdownFiles->get($id);
     }
 
     /**
