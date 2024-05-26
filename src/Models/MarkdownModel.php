@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace TheBatClaudio\EloquentMarkdown\Models;
 
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
@@ -32,6 +33,10 @@ abstract class MarkdownModel extends Model
 
     public const DASHES_SEPARATOR = '---';
 
+    public const DIR_SEPARATOR = '/';
+
+    protected static Filesystem $filesystem;
+
     /**
      * A collection that contains all files retrieved in the default content path.
      */
@@ -52,12 +57,22 @@ abstract class MarkdownModel extends Model
         }
     }
 
+    public static function setFilesystem(Filesystem $filesystem): void
+    {
+        static::$filesystem = $filesystem;
+    }
+
+    public static function getFilesystem(): Filesystem
+    {
+        return static::$filesystem;
+    }
+
     /**
      * Get content path (edit this method if you need different content path for different models).
      */
     protected static function getContentPath(): string
     {
-        return config('markdown-model.path');
+        return '';
     }
 
     /**
@@ -74,7 +89,7 @@ abstract class MarkdownModel extends Model
     protected static function extractFileId(string $filePath): string
     {
         return static::removeFileExtension(
-            Str::replace(static::getContentPath().'/', '', $filePath)
+            Str::replace(static::getContentPath() . static::DIR_SEPARATOR, '', $filePath)
         );
     }
 
@@ -86,7 +101,7 @@ abstract class MarkdownModel extends Model
         $fileName = File::basename($filePath);
 
         $metadata = YamlFrontMatter::parse(
-            File::get($filePath)
+            static::getFilesystem()->get($filePath)
         );
 
         return array_merge(
@@ -107,20 +122,14 @@ abstract class MarkdownModel extends Model
     {
         $contentPath = static::getContentPath();
 
-        $allFiles = File::allFiles($contentPath);
+        $allFiles = static::getFilesystem()->allFiles($contentPath);
 
         // Check if we already retrieved all files
-        if (! static::$allMarkdownFiles || count($allFiles) !== count(static::$allMarkdownFiles)) {
+        if (!static::$allMarkdownFiles || count($allFiles) !== count(static::$allMarkdownFiles)) {
             static::$allMarkdownFiles = (new MarkdownCollection($allFiles))
-                ->filter(function ($file) {
-                    return $file->isFile();
-                })
-                ->sortByDesc(function ($file) {
-                    return $file->getBaseName();
-                })
-                ->mapWithKeys(function ($file) use ($contentPath) {
+                ->mapWithKeys(function ($file) {
                     return [
-                        static::extractFileId($file->getPathName()) => new static($contentPath.'/'.$file->getBaseName()),
+                        static::extractFileId($file) => new static($file),
                     ];
                 });
         }
@@ -133,19 +142,19 @@ abstract class MarkdownModel extends Model
     {
         $contentPath = static::getContentPath();
 
-        if (! static::$allMarkdownFiles) {
+        if (!static::$allMarkdownFiles) {
             static::$allMarkdownFiles = new MarkdownCollection();
         }
 
-        $filePath = $contentPath.'/'.$id.static::FILE_EXTENSION;
+        $filePath = $contentPath . static::DIR_SEPARATOR . $id . static::FILE_EXTENSION;
 
-        static::$allMarkdownFiles[static::removeFileExtension($id)] = (File::exists($filePath)) ? new static($filePath) : null;
+        static::$allMarkdownFiles[static::removeFileExtension($id)] = (static::getFilesystem()->exists($filePath)) ? new static($filePath) : null;
     }
 
     /**
      * Get all markdown files.
      *
-     * @param  array  $columns
+     * @param array $columns
      */
     public static function all($columns = ['*']): MarkdownCollection
     {
@@ -180,7 +189,7 @@ abstract class MarkdownModel extends Model
                         'content',
                     ]
                 )
-            )."\n"
+            ) . "\n"
         );
         $content .= $this->content;
 
@@ -196,7 +205,7 @@ abstract class MarkdownModel extends Model
             return $this->file_path;
         }
 
-        return static::getContentPath().'/'.$this->id.static::FILE_EXTENSION;
+        return static::getContentPath() . static::DIR_SEPARATOR . $this->id . static::FILE_EXTENSION;
     }
 
     /**
@@ -204,15 +213,13 @@ abstract class MarkdownModel extends Model
      */
     public function save(array $options = []): bool
     {
-        $saved = File::put($this->getFilePath(), $this->getFileContent());
+        static::getFilesystem()->put($this->getFilePath(), $this->getFileContent());
 
-        if ($saved) {
-            $this->exists = true;
+        $this->exists = true;
 
-            $this->finishSave($options);
-        }
+        $this->finishSave($options);
 
-        return (bool) $saved;
+        return true;
     }
 
     /**
@@ -220,6 +227,6 @@ abstract class MarkdownModel extends Model
      */
     protected function performDeleteOnModel(): void
     {
-        unlink($this->getFilePath());
+        static::getFilesystem()->delete($this->getFilePath());
     }
 }

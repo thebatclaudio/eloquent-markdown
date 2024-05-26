@@ -3,15 +3,25 @@
 declare(strict_types=1);
 
 use Carbon\Carbon;
+use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Support\Facades\Config;
 use TheBatClaudio\EloquentMarkdown\Models\MarkdownWithDateModel;
 
 class TestWithDateModel extends MarkdownWithDateModel
 {
+    protected static function getContentPath(): string
+    {
+        return 'blog';
+    }
 }
 
 beforeEach(function () {
-    Config::set('markdown-model.path', __DIR__.'/../content/blog');
+    TestModel::setFilesystem(
+        (new FilesystemManager(null))
+            ->createLocalDriver([
+                'root' => __DIR__ . '/../content',
+            ])
+    );
 });
 
 it('returns all files calling all method', function () {

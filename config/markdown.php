@@ -6,12 +6,12 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Default Markdown Path
+    | Default Markdown Disk
     |--------------------------------------------------------------------------
     |
-    | This option defines the default path where markdown files will be saved.
+    | This option defines the default storage disk where markdown files will be saved and retrieved.
     |
     */
 
-    'path' => resource_path('markdown'),
+    'disk' => 'markdown',
 ];

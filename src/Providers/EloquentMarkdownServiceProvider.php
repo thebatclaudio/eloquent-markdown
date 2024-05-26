@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace TheBatClaudio\EloquentMarkdown\Providers;
 
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\ServiceProvider;
-use TheBatClaudio\EloquentMarkdown\Support\MarkdownCollection;
+use TheBatClaudio\EloquentMarkdown\Models\MarkdownModel;
 
 /**
  * The service provider.
@@ -17,17 +16,27 @@ final class EloquentMarkdownServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->publishes([
-            __DIR__.'/../../config/markdown-model.php' => config_path('markdown-model.php'),
+            __DIR__ . '/../../config/markdown.php' => config_path('markdown.php'),
         ], 'config');
+    }
 
-        MarkdownCollection::macro('paginate', function (int $perPage = 10) {
-            /** @var MarkdownCollection $this */
-            $page = LengthAwarePaginator::resolveCurrentPage();
+    /**
+     * @throws BindingResolutionException
+     */
+    public function register(): void
+    {
+        parent::register();
 
-            return new LengthAwarePaginator($this->forPage($page, $perPage), $this->count(), $perPage, $page, [
-                'path' => LengthAwarePaginator::resolveCurrentPath(),
-                'query' => Request::query(),
-            ]);
-        });
+        $this->configureFilesystem();
+    }
+
+    /**
+     * @throws BindingResolutionException
+     */
+    private function configureFilesystem(): void
+    {
+        MarkdownModel::setFilesystem(
+            $this->app->make('filesystem')->disk(config('markdown.disk'))
+        );
     }
 }
