@@ -10,7 +10,7 @@ class TestModel extends MarkdownModel
 }
 
 beforeEach(function () {
-    Config::set('markdown-model.path', __DIR__.'/../content');
+    Config::set('markdown-model.path', __DIR__.'/../content/pages');
 });
 
 it('returns the right file calling find method', function () {
@@ -50,7 +50,7 @@ it('returns the right file calling find method', function () {
         ->toBe($fileId);
 });
 
-it('returns all files calling all methods', function () {
+it('returns all files calling all method', function () {
     $markdowns = TestModel::all()->toArray();
 
     expect($markdowns)

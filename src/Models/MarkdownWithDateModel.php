@@ -8,7 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 
 /**
- * Abstract class MarkdownModel.
+ * Abstract class MarkdownWithDateModel.
  *
  * @property Carbon $date
  * @property string $slug
