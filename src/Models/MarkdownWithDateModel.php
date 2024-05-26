@@ -7,6 +7,12 @@ namespace TheBatClaudio\EloquentMarkdown\Models;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 
+/**
+ * Abstract class MarkdownModel.
+ *
+ * @property Carbon $date
+ * @property string $slug
+ */
 abstract class MarkdownWithDateModel extends MarkdownModel
 {
     public static function extractDate(string $filePath): Carbon

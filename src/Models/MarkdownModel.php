@@ -13,7 +13,12 @@ use Spatie\YamlFrontMatter\YamlFrontMatter;
 use TheBatClaudio\EloquentMarkdown\Support\MarkdownCollection;
 
 /**
- * Class MarkdownModel.
+ * Abstract class MarkdownModel.
+ *
+ * @property string $id
+ * @property string $content
+ * @property string $file_name
+ * @property string $file_path
  */
 abstract class MarkdownModel extends Model
 {
