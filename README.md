@@ -12,18 +12,38 @@ Easily manage Markdown files with YAML Front Matter section using Eloquent Model
 
 ## Installation
 
-You can install the package via composer:
+1. Install the package via composer:
 
-```bash
-composer require thebatclaudio/eloquent-markdown
-```
+    ```bash
+    composer require thebatclaudio/eloquent-markdown
+    ```
 
-By default, markdown files will be retrieved from `resources/markdown`. Optionally you can publish the config file (`config/markdown-model.php`) and
-edit the default markdown's location with:
+2. By default, markdown files will be retrieved from `markdown` storage disk, so you need to define it in your `config/filesystems.php` file:
 
-```bash
-php artisan vendor:publish --provider="TheBatClaudio\EloquentMarkdown\Providers\EloquentMarkdownServiceProvider" --tag="config"
-```
+    ```
+    <?php
+    
+    return [
+    
+        // ...
+    
+        'disks' => [
+            // Existing disks...
+    
+            'markdown' => [
+                'driver' => 'local',
+                'root' => storage_path('markdown'),
+            ],
+        ],
+       
+    ];
+    ```
+
+3. Optionally you can publish the config file (`config/markdown.php`) and edit the default markdowns' disk with:
+
+    ```bash
+    php artisan vendor:publish --provider="TheBatClaudio\EloquentMarkdown\Providers\EloquentMarkdownServiceProvider" --tag="config"
+    ```
 
 ## Usage
 
@@ -35,22 +55,48 @@ class Page extends TheBatClaudio\EloquentMarkdown\Models\MarkdownModel
 }
 ```
 
-```php
-// Get all markdown files
-Page::all();
+### Get all markdown files
 
-// Get a markdown file by its slug (example: homepage.md)
+```php
+$pages = Page::all();
+```
+
+### Get a markdown file by its id
+
+Imagine to have a markdown file named `homepage.md` with the following content:
+
+```yaml
+---
+first_attribute: First attribute
+second_attribute: Second attribute
+third_attribute: Third attribute
+---
+The time has come. You know it. In your mind. In your heart. In your soul. You tried to hold me back. But you can't,
+Bruce. You're weak. You're a shell. A rusty trap that cannot hold me. Let it go. Let me OUT.
+```
+
+You will get the file as Eloquent model using the `find` method:
+```php
+$homepage = Page::find('homepage');
+```
+
+And you will find the following attributes:
+
+```php
+echo $homepage->id; // homepage
+echo $homepage->file_name; // homepage.md
+echo $homepage->file_path; // { YOUR STORAGE PATH }/homepage.md
+echo $homepage->first_attribute; // First attribute
+echo $homepage->second_attribute; // Second attribute
+echo $homepage->third_attribute; // Third attribute
+echo $homepage->content; // The time has come. You know it [...]
+```
+
+### Update a markdown file
+
+```php
 $homepage = Page::find('homepage');
 
-// Get Yaml Front Matter metadata
-echo $homepage->title;
-echo $homepage->description;
-echo $homepage->attribute;
-
-// Get file content
-echo $homepage->content;
-
-// Update an attribute
 $homepage->update([
     'attribute' => 'new value'
 ])
@@ -58,11 +104,17 @@ $homepage->update([
 // or
 $homepage->attribute = 'new value';
 $homepage->save();
+```
 
-// Delete file
+### Delete a markdown file
+```php
+$homepage = Page::find('homepage');
 $homepage->delete();
+```
 
-// Create a new file
+### Create a markdown file
+
+```php
 $newHomepage = new Page();
 $newHomepage->id = 'homepage';
 $newHomepage->title = 'Homepage';
@@ -70,7 +122,7 @@ $newHomepage->content = 'Content';
 $newHomepage->save();
 ```
 
-### Markdown with dates (e.g. YYYY-MM-DD-your-markdown)
+### Using Markdown with dates (e.g. `YYYY-MM-DD-your-markdown.md`)
 
 Create a new model that extends `TheBatClaudio\EloquentMarkdown\Models\MarkdownWithDateModel`:
 
@@ -86,14 +138,14 @@ You will find two new attributes inside your model:
 
 ### Different path for different models
 
-You can extend `getContentPath` inside your model to use a different path instead of the one defined on `config/markdown-model.php`
+You can extend `getContentPath` inside your model to use different paths for different models:
 
 ```php
 class Article extends TheBatClaudio\EloquentMarkdown\Models\MarkdownWithDateModel
 {
     protected static function getContentPath(): string
     {
-        return resource_path('posts');
+        return 'articles';
     }
 }
 
@@ -101,7 +153,7 @@ class Page extends TheBatClaudio\EloquentMarkdown\Models\MarkdownModel
 {
     protected static function getContentPath(): string
     {
-        return resource_path('pages');
+        return 'pages';
     }
 }
 ```
