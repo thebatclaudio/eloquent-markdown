@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace TheBatClaudio\EloquentMarkdown\Support;
 
-use Illuminate\Support\Facades\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Request;
 
 /**
  * Class MarkdownCollection (used to add paginate method to a simple collection).

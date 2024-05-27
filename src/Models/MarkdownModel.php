@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Spatie\LaravelMarkdown\MarkdownRenderer;
 use Spatie\YamlFrontMatter\YamlFrontMatter;
 use TheBatClaudio\EloquentMarkdown\Support\MarkdownCollection;
 
@@ -57,11 +58,17 @@ abstract class MarkdownModel extends Model
         }
     }
 
+    /**
+     * Set filesystem.
+     */
     public static function setFilesystem(Filesystem $filesystem): void
     {
         static::$filesystem = $filesystem;
     }
 
+    /**
+     * Get filesystem.
+     */
     public static function getFilesystem(): Filesystem
     {
         return static::$filesystem;
@@ -89,7 +96,7 @@ abstract class MarkdownModel extends Model
     protected static function extractFileId(string $filePath): string
     {
         return static::removeFileExtension(
-            Str::replace(static::getContentPath() . static::DIR_SEPARATOR, '', $filePath)
+            Str::replace(static::getContentPath().static::DIR_SEPARATOR, '', $filePath)
         );
     }
 
@@ -125,7 +132,7 @@ abstract class MarkdownModel extends Model
         $allFiles = static::getFilesystem()->allFiles($contentPath);
 
         // Check if we already retrieved all files
-        if (!static::$allMarkdownFiles || count($allFiles) !== count(static::$allMarkdownFiles)) {
+        if (! static::$allMarkdownFiles || count($allFiles) !== count(static::$allMarkdownFiles)) {
             static::$allMarkdownFiles = (new MarkdownCollection($allFiles))
                 ->mapWithKeys(function ($file) {
                     return [
@@ -142,11 +149,11 @@ abstract class MarkdownModel extends Model
     {
         $contentPath = static::getContentPath();
 
-        if (!static::$allMarkdownFiles) {
+        if (! static::$allMarkdownFiles) {
             static::$allMarkdownFiles = new MarkdownCollection();
         }
 
-        $filePath = $contentPath . static::DIR_SEPARATOR . $id . static::FILE_EXTENSION;
+        $filePath = $contentPath.static::DIR_SEPARATOR.$id.static::FILE_EXTENSION;
 
         static::$allMarkdownFiles[static::removeFileExtension($id)] = (static::getFilesystem()->exists($filePath)) ? new static($filePath) : null;
     }
@@ -154,7 +161,7 @@ abstract class MarkdownModel extends Model
     /**
      * Get all markdown files.
      *
-     * @param array $columns
+     * @param  array  $columns
      */
     public static function all($columns = ['*']): MarkdownCollection
     {
@@ -189,7 +196,7 @@ abstract class MarkdownModel extends Model
                         'content',
                     ]
                 )
-            ) . "\n"
+            )."\n"
         );
         $content .= $this->content;
 
@@ -205,7 +212,7 @@ abstract class MarkdownModel extends Model
             return $this->file_path;
         }
 
-        return static::getContentPath() . static::DIR_SEPARATOR . $this->id . static::FILE_EXTENSION;
+        return static::getContentPath().static::DIR_SEPARATOR.$this->id.static::FILE_EXTENSION;
     }
 
     /**
@@ -228,5 +235,13 @@ abstract class MarkdownModel extends Model
     protected function performDeleteOnModel(): void
     {
         static::getFilesystem()->delete($this->getFilePath());
+    }
+
+    /**
+     * Render markdown content as HTML.
+     */
+    public function toHtml(): string
+    {
+        return app(MarkdownRenderer::class)->toHtml($this->content);
     }
 }

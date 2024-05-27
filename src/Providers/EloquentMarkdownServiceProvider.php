@@ -16,7 +16,7 @@ final class EloquentMarkdownServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->publishes([
-            __DIR__ . '/../../config/markdown.php' => config_path('markdown.php'),
+            __DIR__.'/../../config/markdown.php' => config_path('markdown.php'),
         ], 'config');
     }
 

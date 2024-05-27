@@ -20,7 +20,7 @@ Easily manage Markdown files with YAML Front Matter section using Eloquent Model
 
 2. By default, markdown files will be retrieved from `markdown` storage disk, so you need to define it in your `config/filesystems.php` file:
 
-    ```
+    ```php
     <?php
     
     return [
