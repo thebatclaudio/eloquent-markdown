@@ -2,23 +2,13 @@
 
 declare(strict_types=1);
 
-use Illuminate\Filesystem\FilesystemManager;
 use TheBatClaudio\EloquentMarkdown\Models\MarkdownModel;
-
-class TestModel extends MarkdownModel
-{
-    protected static function getContentPath(): string
-    {
-        return 'pages';
-    }
-}
+use TheBatClaudio\EloquentMarkdown\Tests\Support\Fixture;
+use TheBatClaudio\EloquentMarkdown\Tests\Support\Models\TestModel;
 
 beforeEach(function () {
     TestModel::setFilesystem(
-        (new FilesystemManager(null))
-            ->createLocalDriver([
-                'root' => __DIR__.'/../content',
-            ])
+        Fixture::getFilesystem()
     );
 });
 
@@ -86,7 +76,7 @@ it('should save file', function () {
 
     $markdown->save();
 
-    $filepath = __DIR__.'/../content/'.'pages'.'/'.$fileId.MarkdownModel::FILE_EXTENSION;
+    $filepath = Fixture::getFilesystem()->path("/pages/$fileId".MarkdownModel::FILE_EXTENSION);
 
     expect(file_exists($filepath))
         ->toBeTrue();
@@ -106,7 +96,7 @@ it('should delete file', function () {
 
     $markdown->save();
 
-    $filepath = __DIR__.'/../content/'.'pages'.'/'.$fileId.MarkdownModel::FILE_EXTENSION;
+    $filepath = Fixture::getFilesystem()->path("/pages/$fileId".MarkdownModel::FILE_EXTENSION);
 
     expect(file_exists($filepath))
         ->toBeTrue();
@@ -119,7 +109,7 @@ it('should delete file', function () {
 
 it('should update file', function () {
     $fileId = 'update-test';
-    $filepath = __DIR__.'/../content/'.'pages'.'/'.$fileId.MarkdownModel::FILE_EXTENSION;
+    $filepath = Fixture::getFilesystem()->path("/pages/$fileId".MarkdownModel::FILE_EXTENSION);
 
     $markdown = new TestModel();
 

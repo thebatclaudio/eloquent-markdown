@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace TheBatClaudio\EloquentMarkdown\Models;
+namespace TheBatClaudio\EloquentMarkdown\Models\Traits;
 
 use Carbon\Carbon;
 use Illuminate\Support\Str;
@@ -13,7 +13,7 @@ use Illuminate\Support\Str;
  * @property Carbon $date
  * @property string $slug
  */
-abstract class MarkdownWithDateModel extends MarkdownModel
+trait WithDate
 {
     public static function extractDate(string $filePath): Carbon
     {

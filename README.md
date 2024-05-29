@@ -8,7 +8,7 @@
   <a href="https://img.shields.io/github/actions/workflow/status/thebatclaudio/laravel-eloquent-markdown/tests.yml?branch=main&label=tests&style=flat-square"><img src="https://img.shields.io/github/actions/workflow/status/thebatclaudio/laravel-eloquent-markdown/tests.yml?branch=main&label=tests&style=flat-square" alt="GitHub Workflow Status" /></a>
 </p>
 
-Easily manage Markdown files with YAML Front Matter section using Eloquent Models.
+Easily manage Markdown files with a YAML Front Matter section using Eloquent models in your Laravel application.
 
 ## Installation
 
@@ -50,7 +50,9 @@ Easily manage Markdown files with YAML Front Matter section using Eloquent Model
 Create a new model that extends `TheBatClaudio\EloquentMarkdown\Models\MarkdownModel`:
 
 ```php
-class Page extends TheBatClaudio\EloquentMarkdown\Models\MarkdownModel
+use TheBatClaudio\EloquentMarkdown\Models\MarkdownModel;
+
+class Page extends MarkdownModel
 {
 }
 ```
@@ -124,11 +126,15 @@ $newHomepage->save();
 
 ### Using Markdown with dates (e.g. `YYYY-MM-DD-your-markdown.md`)
 
-Create a new model that extends `TheBatClaudio\EloquentMarkdown\Models\MarkdownWithDateModel`:
+Create a new model that extends `TheBatClaudio\EloquentMarkdown\Models\MarkdownModel` and uses `TheBatClaudio\EloquentMarkdown\Models\Traits\WithDate` trait:
 
 ```php
-class Article extends TheBatClaudio\EloquentMarkdown\Models\MarkdownWithDateModel
+use TheBatClaudio\EloquentMarkdown\Models\MarkdownModel;
+use TheBatClaudio\EloquentMarkdown\Models\Traits\WithDate;
+
+class Article extends MarkdownModel
 {
+    use WithDate;
 }
 ```
 
@@ -141,15 +147,20 @@ You will find two new attributes inside your model:
 You can extend `getContentPath` inside your model to use different paths for different models:
 
 ```php
-class Article extends TheBatClaudio\EloquentMarkdown\Models\MarkdownWithDateModel
+use TheBatClaudio\EloquentMarkdown\Models\MarkdownModel;
+use TheBatClaudio\EloquentMarkdown\Models\Traits\WithDate;
+
+class Article extends MarkdownModel
 {
+    use WithDate;
+
     protected static function getContentPath(): string
     {
         return 'articles';
     }
 }
 
-class Page extends TheBatClaudio\EloquentMarkdown\Models\MarkdownModel
+class Page extends MarkdownModel
 {
     protected static function getContentPath(): string
     {
