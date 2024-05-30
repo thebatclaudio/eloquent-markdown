@@ -134,7 +134,10 @@ abstract class MarkdownModel extends Model
         // Check if we already retrieved all files
         if (! static::$allMarkdownFiles || count($allFiles) !== count(static::$allMarkdownFiles)) {
             static::$allMarkdownFiles = (new MarkdownCollection($allFiles))
-                ->mapWithKeys(function ($file) {
+                ->filter(static function (string $file) {
+                    return Str::endsWith($file, static::FILE_EXTENSION);
+                })
+                ->mapWithKeys(static function (string $file) {
                     return [
                         static::extractFileId($file) => new static($file),
                     ];
