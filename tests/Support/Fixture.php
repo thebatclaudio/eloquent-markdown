@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace TheBatClaudio\EloquentMarkdown\Tests\Support;
 
 use Illuminate\Contracts\Filesystem\Filesystem;
