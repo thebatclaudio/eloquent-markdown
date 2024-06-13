@@ -1,24 +1,24 @@
 # Convert Markdown files to Eloquent models
 
-<p>
-  <a href="https://raw.githubusercontent.com/thebatclaudio/eloquent-markdown/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="GitHub License" /></a>
-  <a href="https://packagist.org/packages/thebatclaudio/eloquent-markdown"><img src="https://img.shields.io/packagist/v/thebatclaudio/eloquent-markdown.svg" alt="Latest stable version" /></a>
-  <a href="https://packagist.org/packages/thebatclaudio/eloquent-markdown"><img alt="Total Downloads" src="https://img.shields.io/packagist/dt/thebatclaudio/eloquent-markdown"></a>
-  <a href="https://styleci.io/repos/792520425"><img src="https://styleci.io/repos/792520425/shield" alt="StyleCI Status" /></a>
-  <a href="https://img.shields.io/github/actions/workflow/status/thebatclaudio/laravel-eloquent-markdown/tests.yml?branch=main&label=tests&style=flat-square"><img src="https://img.shields.io/github/actions/workflow/status/thebatclaudio/laravel-eloquent-markdown/tests.yml?branch=main&label=tests&style=flat-square" alt="GitHub Workflow Status" /></a>
-</p>
+[![GitHub License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/thebatclaudio/eloquent-markdown/LICENSE)
+[![Latest Stable Version](https://img.shields.io/packagist/v/thebatclaudio/eloquent-markdown.svg)](https://packagist.org/packages/thebatclaudio/eloquent-markdown)
+[![Total Downloads](https://img.shields.io/packagist/dt/thebatclaudio/eloquent-markdown)](https://packagist.org/packages/thebatclaudio/eloquent-markdown)
+[![StyleCI Status](https://styleci.io/repos/792520425/shield)](https://styleci.io/repos/792520425)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/thebatclaudio/laravel-eloquent-markdown/tests.yml?branch=main&label=tests&style=flat-square)](https://img.shields.io/github/actions/workflow/status/thebatclaudio/laravel-eloquent-markdown/tests.yml?branch=main&label=tests&style=flat-square)
 
 Easily manage Markdown files with a YAML Front Matter section using Eloquent models in your Laravel application.
 
 ## Installation
 
-1. Install the package via composer:
+1. **Install the package via Composer**:
 
     ```bash
     composer require thebatclaudio/eloquent-markdown
     ```
 
-2. By default, markdown files will be retrieved from `markdown` storage disk, so you need to define it in your `config/filesystems.php` file:
+2. **Configure the filesystem disk**
+
+   By default, markdown files will be retrieved from `markdown` storage disk, so you need to define it in your `config/filesystems.php` file:
 
     ```php
     <?php
@@ -39,7 +39,35 @@ Easily manage Markdown files with a YAML Front Matter section using Eloquent mod
     ];
     ```
 
-3. Optionally you can publish the config file (`config/markdown.php`) and edit the default markdowns' disk with:
+    or, if you want to use S3:
+
+    ```php
+    <?php
+    
+    return [
+    
+        // ...
+    
+        'disks' => [
+            // Existing disks...
+    
+            'markdown' => [
+                'driver' => 's3',
+                'key' => env('AWS_ACCESS_KEY_ID'),
+                'secret' => env('AWS_SECRET_ACCESS_KEY'),
+                'region' => env('AWS_DEFAULT_REGION'),
+                'bucket' => env('AWS_BUCKET'),
+                'url' => env('AWS_URL'),
+                'endpoint' => env('AWS_ENDPOINT'),
+            ],
+        ],
+       
+    ];
+    ```   
+
+4. **Publish the configuration file (optional)**
+
+   Optionally you can publish the config file (`config/markdown.php`) to edit the default markdowns' disk with:
 
     ```bash
     php artisan vendor:publish --provider="TheBatClaudio\EloquentMarkdown\Providers\EloquentMarkdownServiceProvider" --tag="config"
