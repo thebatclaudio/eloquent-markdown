@@ -1,4 +1,4 @@
-# Convert Markdown files to Eloquent models
+# Eloquent Markdown
 
 [![GitHub License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/thebatclaudio/eloquent-markdown/LICENSE)
 [![Latest Stable Version](https://img.shields.io/packagist/v/thebatclaudio/eloquent-markdown.svg)](https://packagist.org/packages/thebatclaudio/eloquent-markdown)
