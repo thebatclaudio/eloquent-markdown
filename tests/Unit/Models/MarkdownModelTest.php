@@ -67,7 +67,7 @@ it('returns the right file calling find method', function () {
 it('should save file', function () {
     $fileId = 'create-test';
 
-    $markdown = new TestModel();
+    $markdown = new TestModel;
 
     $markdown->id = $fileId;
     $markdown->attribute = 'test';
@@ -87,7 +87,7 @@ it('should save file', function () {
 it('should delete file', function () {
     $fileId = 'delete-test';
 
-    $markdown = new TestModel();
+    $markdown = new TestModel;
 
     $markdown->id = $fileId;
     $markdown->attribute = 'test';
@@ -111,7 +111,7 @@ it('should update file', function () {
     $fileId = 'update-test';
     $filepath = Fixture::getFilesystem()->path("/pages/$fileId".MarkdownModel::FILE_EXTENSION);
 
-    $markdown = new TestModel();
+    $markdown = new TestModel;
 
     $markdown->id = $fileId;
     $markdown->attribute = 'test';
