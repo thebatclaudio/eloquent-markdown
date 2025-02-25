@@ -17,11 +17,11 @@
   ],
   "require": {
     "php": "^8.1",
-    "ext-yaml": "*",
     "illuminate/database": "^10.0|^11.0",
     "illuminate/support": "^10.0|^11.0",
     "spatie/laravel-markdown": "^2.5",
-    "spatie/yaml-front-matter": "^2.0"
+    "spatie/yaml-front-matter": "^2.0",
+    "symfony/yaml": "^7.2"
   },
   "minimum-stability": "dev",
   "prefer-stable": true,
