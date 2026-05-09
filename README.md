@@ -8,6 +8,15 @@
 
 Easily manage Markdown files with a YAML Front Matter section using Eloquent models in your Laravel application.
 
+## Compatibility
+
+| Package | PHP | Laravel |
+|---------|-----|---------|
+| `^2.0`  | `^8.3` | `^12.0`, `^13.0` |
+| `^1.0`  | `^8.2` | `^10.0`, `^11.0`, `^12.0`, `^13.0` |
+
+> **Upgrading from v1 to v2?** v2 drops PHP 8.2 (security-only since Dec 2024) and Laravel 10/11 (EOL). No application code changes are required if you are already on PHP 8.3+ and Laravel 12+.
+
 ## Installation
 
 1. **Install the package via Composer**:
