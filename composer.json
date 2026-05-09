@@ -17,8 +17,8 @@
   ],
   "require": {
     "php": "^8.2",
-    "illuminate/database": "^10.0|^11.0",
-    "illuminate/support": "^10.0|^11.0",
+    "illuminate/database": "^10.0|^11.0|^12.0",
+    "illuminate/support": "^10.0|^11.0|^12.0",
     "spatie/laravel-markdown": "^2.5",
     "spatie/yaml-front-matter": "^2.0",
     "symfony/yaml": "^7.2"
@@ -34,11 +34,11 @@
     }
   },
   "require-dev": {
-    "larastan/larastan": "^2.0",
+    "larastan/larastan": "^2.0|^3.0",
     "laravel/pint": "^1.15",
-    "orchestra/testbench": "^8.0|^9.0",
-    "pestphp/pest": "^2.34",
-    "phpstan/phpstan": "^1.10"
+    "orchestra/testbench": "^8.0|^9.0|^10.0",
+    "pestphp/pest": "^2.34|^3.0",
+    "phpstan/phpstan": "^1.10|^2.0"
   },
   "autoload-dev": {
     "psr-4": {
